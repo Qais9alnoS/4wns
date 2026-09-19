@@ -19,7 +19,7 @@ export default function Nav() {
 
   return (
     <header className="sticky top-0 z-[100] backdrop-blur-3xl bg-bg/90 border-b border-[var(--line)]">
-      <div className="max-w-[1160px] mx-auto flex items-center justify-between gap-3 px-5 md:px-7 py-3">
+      <div className="w-full flex items-center justify-between gap-3 px-5 md:px-8 lg:px-10 py-3">
         <button
           className="md:hidden text-cream text-2xl leading-none px-1"
           aria-label="القائمة"

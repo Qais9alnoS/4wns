@@ -45,7 +45,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         ...(time !== undefined && { time }),
         ...(location !== undefined && { location }),
         ...(description !== undefined && { description }),
-        ...(instagramDmUrl !== undefined && { instagramDmUrl: instagramDmUrl.trim() || null }),
+        ...(instagramDmUrl !== undefined && { instagramDmUrl: instagramDmUrl.trim() || '' }),
         ...(status !== undefined && { status }),
         imageUrl,
         imagePublicId,

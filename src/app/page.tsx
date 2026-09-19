@@ -1,21 +1,15 @@
+import { Suspense } from 'react';
 import Image from 'next/image';
-import { prisma } from '@/lib/prisma';
-import { selectHomeEvents } from '@/lib/eventLogic';
-import BestMediaSlider from '@/components/BestMediaSlider';
-import EventsSection from '@/components/EventsSection';
+import HomeHighlights from '@/components/HomeHighlights';
+import HomeEvents from '@/components/HomeEvents';
+import HighlightsSkeleton from '@/components/HighlightsSkeleton';
+import EventsSkeleton from '@/components/EventsSkeleton';
 import DiscographySection from '@/components/DiscographySection';
 import Footer from '@/components/Footer';
 
 export const revalidate = 0;
 
 export default async function HomePage() {
-  const [bestMedia, events] = await Promise.all([
-    prisma.media.findMany({ where: { isBest: true }, orderBy: { createdAt: 'desc' }, take: 5 }),
-    prisma.event.findMany(),
-  ]);
-
-  const { completed, upcoming } = selectHomeEvents(events);
-
   return (
     <main>
       {/* HERO */}
@@ -103,8 +97,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <BestMediaSlider items={bestMedia} />
-      <EventsSection completed={completed} upcoming={upcoming} />
+      <Suspense fallback={<HighlightsSkeleton />}>
+        <HomeHighlights />
+      </Suspense>
+      <Suspense fallback={<EventsSkeleton />}>
+        <HomeEvents />
+      </Suspense>
       <DiscographySection />
       <Footer />
     </main>

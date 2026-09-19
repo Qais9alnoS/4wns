@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
         time: time || null,
         location: location || null,
         description: description || null,
-        instagramDmUrl: instagramDmUrl?.trim() || null,
+        instagramDmUrl: instagramDmUrl?.trim() || '',
         status: status || 'UPCOMING',
         imageUrl,
         imagePublicId,

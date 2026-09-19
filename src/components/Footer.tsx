@@ -3,7 +3,7 @@ export default function Footer() {
     <footer className="py-11 md:py-14 border-t border-[var(--line)] bg-bg">
       <div
         dir="ltr"
-        className="max-w-[1160px] mx-auto px-5 flex flex-col md:flex-row md:items-center md:justify-center gap-6 md:gap-10"
+        className="w-full px-5 md:px-8 lg:px-10 flex flex-col md:flex-row md:items-center md:justify-center gap-6 md:gap-10"
       >
         <div dir="rtl" className="text-center md:text-left">
           <div className="font-display text-2xl mb-3">أربعة و نص</div>

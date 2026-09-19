@@ -13,6 +13,7 @@ const members = [
     username: 'yazannmusic',
     url: 'https://www.instagram.com/yazannmusic/?hl=en',
     photo: '/assets/members/yazan.jpg',
+    background: "/assets/backgrounds/yazan'sbg.png",
   },
   {
     name: 'تيما ريماوي',
@@ -52,7 +53,7 @@ export default function AboutPage() {
   return (
     <main>
       <section className="pt-10 md:pt-14 pb-8 md:pb-10">
-        <div className="max-w-[1160px] mx-auto px-5 md:px-7">
+        <div className="w-full px-5 md:px-8 lg:px-10">
 
           <div>
             {members.map((m, i) => {
@@ -60,12 +61,24 @@ export default function AboutPage() {
               return (
                 <Reveal key={m.username}>
                   <div
-                    className={`flex flex-col md:flex-row gap-9 md:gap-10 items-center md:items-stretch py-10 md:py-16 ${
+                    className={`relative flex flex-col md:flex-row gap-9 md:gap-10 items-center md:items-stretch py-10 md:py-16 ${
                       i > 0 ? 'border-t border-[var(--line)] mt-2 md:pt-20' : 'pt-4 md:pt-6'
                     } ${imgLeft ? 'md:flex-row' : 'md:flex-row-reverse'}`}
                   >
+                    {m.background && (
+                      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
+                        <Image
+                          src={m.background}
+                          alt=""
+                          fill
+                          sizes="100vw"
+                          className="object-cover object-left opacity-90"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-l from-bg via-bg/55 to-transparent md:via-bg/25" />
+                      </div>
+                    )}
                     <div
-                      className={`relative border border-[var(--line)] p-2.5 bg-gradient-to-b from-panel to-bg-soft max-w-[360px] md:max-w-[420px] w-full flex-shrink-0 ${
+                      className={`relative z-[1] border border-[var(--line)] p-2.5 bg-gradient-to-b from-panel to-bg-soft max-w-[360px] md:max-w-[420px] w-full flex-shrink-0 ${
                         imgLeft ? 'md:-rotate-[1.6deg]' : 'md:rotate-[1.6deg]'
                       }`}
                     >
@@ -88,7 +101,7 @@ export default function AboutPage() {
                     </div>
 
                     <div
-                      className={`flex-1 min-w-0 flex flex-col justify-center text-right ${
+                      className={`relative z-[1] flex-1 min-w-0 w-full flex flex-col justify-center text-right ${
                         imgLeft ? 'md:text-right' : 'md:text-left'
                       }`}
                     >
@@ -102,13 +115,14 @@ export default function AboutPage() {
                         href={m.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`inline-flex items-center gap-3 text-cream hover:text-gold-light transition-colors self-start ${
-                          imgLeft ? '' : 'md:self-end md:flex-row-reverse'
+                        dir="ltr"
+                        className={`inline-flex items-center gap-3 text-cream hover:text-gold-light transition-colors self-end ${
+                          imgLeft ? 'md:self-start' : ''
                         }`}
                         style={{ fontSize: 'clamp(1.1rem, 1.8vw, 1.3rem)' }}
                       >
                         <InstaIcon />
-                        {m.username}@
+                        @{m.username}
                       </a>
                     </div>
                   </div>
