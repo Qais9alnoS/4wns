@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum EventStatus {
+  UPCOMING
+  COMPLETED
+}
+
+model Media {
+  id            String    @id @default(cuid())
+  type          MediaType
+  cloudinaryUrl String
+  publicId      String
+  description   String?
+  date          DateTime?
+  details       String?
+  isBest        Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([isBest])
+}
+
+model Event {
+  id             String      @id @default(cuid())
+  name           String
+  date           DateTime
+  time           String?
+  location       String?
+  description    String?
+  imageUrl       String?
+  imagePublicId  String?
+  instagramDmUrl String
+  status         EventStatus @default(UPCOMING)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([status, date])
+}
