@@ -9,6 +9,10 @@ function formatDate(d: string | Date | null) {
   return new Intl.DateTimeFormat('ar-SY', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(d));
 }
 
+function hasInfo(item: Media) {
+  return Boolean(item.description || item.details || item.date);
+}
+
 export default function GalleryPage() {
   const [items, setItems] = useState<Media[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,9 +59,16 @@ export default function GalleryPage() {
                   />
                 )}
                 {item.type === 'VIDEO' && (
-                  <span className="absolute inset-0 flex items-center justify-center text-cream text-3xl bg-black/20">
+                  <span className="absolute inset-0 flex items-center justify-center text-cream text-3xl bg-black/20 md:group-hover:opacity-0 transition-opacity">
                     ▶
                   </span>
+                )}
+                {hasInfo(item) && (
+                  <div className="hidden md:flex absolute inset-0 flex-col justify-end p-3 bg-gradient-to-t from-black/85 via-black/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity text-right">
+                    {item.description && <p className="text-cream text-sm font-bold leading-snug line-clamp-2">{item.description}</p>}
+                    {item.details && <p className="text-cream-dim text-xs mt-1 line-clamp-2">{item.details}</p>}
+                    {item.date && <p className="text-gold-light text-xs mt-1">{formatDate(item.date)}</p>}
+                  </div>
                 )}
               </button>
             ))}

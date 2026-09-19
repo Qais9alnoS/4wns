@@ -21,13 +21,13 @@ export async function POST(request: NextRequest) {
       time?: string;
       location?: string;
       description?: string;
-      instagramDmUrl: string;
+      instagramDmUrl?: string;
       status?: 'UPCOMING' | 'COMPLETED';
       image?: string; // optional data URI
     };
 
-    if (!name || !date || !instagramDmUrl) {
-      return NextResponse.json({ error: 'الاسم والتاريخ ورابط Instagram DM مطلوبة' }, { status: 400 });
+    if (!name || !date) {
+      return NextResponse.json({ error: 'الاسم والتاريخ مطلوبان' }, { status: 400 });
     }
 
     let imageUrl: string | null = null;
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
         time: time || null,
         location: location || null,
         description: description || null,
-        instagramDmUrl,
+        instagramDmUrl: instagramDmUrl?.trim() || null,
         status: status || 'UPCOMING',
         imageUrl,
         imagePublicId,

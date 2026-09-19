@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { Media } from '@prisma/client';
 import { fileToDataUri } from '@/lib/fileToDataUri';
+import FilePicker from './FilePicker';
 
 const BEST_LIMIT = 5;
 
@@ -97,12 +98,7 @@ export default function MediaManager() {
 
         <div>
           <label className="block text-sm text-cream-dim mb-1.5">الملف</label>
-          <input
-            type="file"
-            accept="image/*,video/*"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-            className="w-full text-sm text-cream-dim"
-          />
+          <FilePicker accept="image/*,video/*" value={file} onChange={setFile} />
         </div>
 
         <div>

@@ -15,8 +15,7 @@ export default function BestMediaSlider({ items }: { items: Media[] }) {
     <section className="py-10 md:py-14">
       <div className="max-w-[1160px] mx-auto px-5 md:px-7">
         <div className="flex items-center gap-4 mb-6">
-          <span className="font-display text-brick text-base opacity-90">✶</span>
-          <h2 className="font-display text-xl md:text-2xl tracking-wide">أفضل اللحظات</h2>
+          <h2 className="font-display text-xl md:text-2xl tracking-wide">هايلايتس</h2>
           <div className="flex-1 h-px bg-[var(--line)]" />
         </div>
 

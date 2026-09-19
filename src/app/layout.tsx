@@ -25,8 +25,12 @@ const jomhuria = Jomhuria({
 });
 
 export const metadata: Metadata = {
-  title: 'أربعة و نص | فرقة روك - دمشق',
-  description: 'أربعة عازفين... ونصّهم بيغنّي. فرقة روك سورية طالعة من قلب دمشق.',
+  title: 'أربعة ونص',
+  description: 'أربع عزّيفة ... ونصّهم بيغنّي, فرقة روك عربي طالعة من قلب دمشق',
+  icons: {
+    icon: '/assets/logo/logo.jpg',
+    apple: '/assets/logo/logo.jpg',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

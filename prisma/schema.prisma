@@ -41,7 +41,7 @@ model Event {
   description    String?
   imageUrl       String?
   imagePublicId  String?
-  instagramDmUrl String
+  instagramDmUrl String?
   status         EventStatus @default(UPCOMING)
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt

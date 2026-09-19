@@ -8,13 +8,10 @@ function formatDate(d: Date) {
 }
 
 function EventCard({ event }: { event: Event }) {
-  const card = (
-    <a
-      href={event.instagramDmUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block relative border border-[var(--line)] bg-panel p-5 hover:border-gold transition-colors group"
-    >
+  const className =
+    'block relative border border-[var(--line)] bg-panel p-5 hover:border-gold transition-colors group';
+  const content = (
+    <>
       {event.imageUrl && (
         <div className="relative w-full aspect-[4/3] mb-4 overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -40,8 +37,17 @@ function EventCard({ event }: { event: Event }) {
         {event.location ? ` · ${event.location}` : ''}
       </p>
       {event.description && <p className="text-cream-dim text-sm line-clamp-2">{event.description}</p>}
-    </a>
+    </>
   );
+
+  const card = event.instagramDmUrl ? (
+    <a href={event.instagramDmUrl} target="_blank" rel="noopener noreferrer" className={className}>
+      {content}
+    </a>
+  ) : (
+    <div className={className}>{content}</div>
+  );
+
   return <Reveal>{card}</Reveal>;
 }
 

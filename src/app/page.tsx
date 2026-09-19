@@ -54,7 +54,7 @@ export default async function HomePage() {
               className="text-cream-dim text-base md:text-lg leading-loose max-w-[52ch] mb-7 fade-up"
               style={{ animationDelay: '.3s' }}
             >
-              أربعة عازفين... ونصّهم بيغنّي. فرقة روك عربي طالعة من قلب دمشق.
+              أربع عزّيفة ... ونصّهم بيغنّي, فرقة روك عربي طالعة من قلب دمشق
             </p>
             <div
               className="flex flex-wrap gap-6 mb-8 text-sm text-cream-dim fade-up"

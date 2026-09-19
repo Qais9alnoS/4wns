@@ -51,12 +51,7 @@ const InstaIcon = () => (
 export default function AboutPage() {
   return (
     <main>
-      <section className="pt-14 pb-4">
-        <div className="max-w-[640px] mx-auto px-5">
-        </div>
-      </section>
-
-      <section className="py-16 md:py-24">
+      <section className="pt-10 md:pt-14 pb-8 md:pb-10">
         <div className="max-w-[1160px] mx-auto px-5 md:px-7">
 
           <div>
@@ -66,7 +61,7 @@ export default function AboutPage() {
                 <Reveal key={m.username}>
                   <div
                     className={`flex flex-col md:flex-row gap-9 md:gap-10 items-center md:items-stretch py-10 md:py-16 ${
-                      i > 0 ? 'border-t border-[var(--line)] mt-2 md:pt-20' : ''
+                      i > 0 ? 'border-t border-[var(--line)] mt-2 md:pt-20' : 'pt-4 md:pt-6'
                     } ${imgLeft ? 'md:flex-row' : 'md:flex-row-reverse'}`}
                   >
                     <div
