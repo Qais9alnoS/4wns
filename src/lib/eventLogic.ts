@@ -13,7 +13,7 @@ export type HomeEvents = {
 export function selectHomeEvents(events: Event[]): HomeEvents {
   const completed = events
     .filter((e) => e.status === 'COMPLETED')
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()) // من الأقدم للأحدث
     .slice(0, 2);
 
   const upcomingCandidates = events

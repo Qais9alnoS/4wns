@@ -3,35 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Media } from '@prisma/client';
 
-const MOCK_COPY = [
-  {
-    date: '٢٣ شباط ٢٠٢٦',
-    title: 'الألبوم الجديد خارج الآن',
-    body: 'إصدار محدود يجمع تسجيلات حيّة من دمشق مع أغلفة خاصة للجمع. مساحة للوصف اللي رح ينضاف لاحقاً من لوحة التحكم.',
-  },
-  {
-    date: '٤ آذار ٢٠٢٦',
-    title: 'ليلة الروك في ساحة الأمويين',
-    body: 'هايلايت من آخر ظهور للفرقة على المسرح: إضاءة، جمهور، وثلاث أغاني ما انعرضت قبل هيك.',
-  },
-  {
-    date: '١٨ نيسان ٢٠٢٦',
-    title: 'كواليس التسجيل',
-    body: 'لقطات من الاستوديو أثناء تجهيز الإصدار الجاي. النص هون تجريبي حتى يتحدد شكل الكرت.',
-  },
-  {
-    date: '٩ أيار ٢٠٢٦',
-    title: 'جلسة صوتيات مفتوحة',
-    body: 'مقتطف قصير من بروفة مفتوحة للجمهور. سطرين وصف بهالشكل حتى يبقى التوازن مع الصورة.',
-  },
-  {
-    date: '٢٧ حزيران ٢٠٢٦',
-    title: 'غلاف الإصدار المحدود',
-    body: 'تفاصيل الغلاف والألوان والخامات. النص الوهمي بيحجز مكان العنوان والفقرة بدون منطق إداري جديد.',
-  },
-];
-
 const GAP = 20;
+
+function formatDate(d: string | Date | null) {
+  if (!d) return null;
+  return new Intl.DateTimeFormat('ar-SY', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(d));
+}
 
 function visibleCount(width: number) {
   if (width >= 1280) return 4;
@@ -127,12 +104,11 @@ export default function BestMediaSlider({ items }: { items: Media[] }) {
             }}
           >
             {items.map((item, i) => {
-              const copy = MOCK_COPY[i % MOCK_COPY.length];
-
+              const dateLabel = formatDate(item.date);
               return (
                 <article
                   key={item.id}
-                  className="flex aspect-square shrink-0 flex-col"
+                  className="flex aspect-square shrink-0 flex-col group"
                   style={{ width: cardW || undefined }}
                   onClick={() => {
                     if (dragged.current) return;
@@ -145,30 +121,39 @@ export default function BestMediaSlider({ items }: { items: Media[] }) {
                         key={item.id}
                         src={item.cloudinaryUrl}
                         controls
-                        className="h-full w-full object-cover"
+                        controlsList="nodownload"
+                        className="h-full w-full object-cover [&::-webkit-media-controls]:opacity-0 [&::-webkit-media-controls]:transition-opacity [&::-webkit-media-controls]:group-hover:opacity-100 [&::-webkit-media-controls]:group-active:opacity-100"
                       />
                     ) : (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={item.cloudinaryUrl}
-                        alt={copy.title}
+                        alt={item.description || ''}
                         className="h-full w-full object-cover"
                         loading="lazy"
                       />
                     )}
                   </div>
 
-                  <div dir="rtl" className="shrink-0 pt-4">
-                    <p className="text-[11px] tracking-[0.18em] text-cream-dim mb-2 uppercase">
-                      {copy.date}
-                    </p>
-                    <h3 className="font-display text-lg md:text-xl leading-[1.2] mb-2">
-                      {copy.title}
-                    </h3>
-                    <p className="text-cream-dim text-sm leading-relaxed line-clamp-2">
-                      {copy.body}
-                    </p>
-                  </div>
+                  {(dateLabel || item.description || item.details) && (
+                    <div dir="rtl" className="shrink-0 pt-4">
+                      {dateLabel && (
+                        <p className="text-[11px] tracking-[0.18em] text-cream-dim mb-2 uppercase">
+                          {dateLabel}
+                        </p>
+                      )}
+                      {item.description && (
+                        <h3 className="font-display text-lg md:text-xl leading-[1.2] mb-2">
+                          {item.description}
+                        </h3>
+                      )}
+                      {item.details && (
+                        <p className="text-cream-dim text-sm leading-relaxed line-clamp-2">
+                          {item.details}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </article>
               );
             })}

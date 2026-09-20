@@ -33,7 +33,7 @@ export default function Footer() {
           className="flex items-center justify-center gap-3 hover:opacity-90 transition-opacity"
         >
           <p className="text-gold-light text-xs md:text-sm font-bold leading-snug max-w-[14rem] text-right">
-            This Website Made By Rizonway Team
+            This Website Was Made By Rizonway Team
           </p>
           <div
             className="w-14 h-14 shrink-0 bg-gold-light"

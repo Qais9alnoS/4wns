@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import type { Media } from '@prisma/client';
-import { fileToDataUri } from '@/lib/fileToDataUri';
 import FilePicker from './FilePicker';
 
 const BEST_LIMIT = 5;
@@ -20,6 +19,12 @@ export default function MediaManager() {
   const [date, setDate] = useState('');
   const [details, setDetails] = useState('');
   const [isBest, setIsBest] = useState(false);
+
+  // edit state
+  const [editing, setEditing] = useState<Media | null>(null);
+  const [editDescription, setEditDescription] = useState('');
+  const [editDate, setEditDate] = useState('');
+  const [editDetails, setEditDetails] = useState('');
 
   const bestCount = items.filter((m) => m.isBest).length;
 
@@ -44,11 +49,16 @@ export default function MediaManager() {
     }
     setSubmitting(true);
     try {
-      const dataUri = await fileToDataUri(file);
+      const form = new FormData();
+      form.append('file', file);
+      form.append('type', type);
+      form.append('description', description);
+      form.append('date', date);
+      form.append('details', details);
+      form.append('isBest', String(isBest));
       const res = await fetch('/api/media', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ file: dataUri, type, description, date, details, isBest }),
+        body: form,
       });
       const data = await res.json();
       if (!res.ok) {
@@ -87,6 +97,42 @@ export default function MediaManager() {
     if (!confirm('هل تريد حذف هذا العنصر؟')) return;
     await fetch(`/api/media/${id}`, { method: 'DELETE' });
     load();
+  }
+
+  function handleEdit(item: Media) {
+    setEditing(item);
+    setEditDescription(item.description || '');
+    setEditDate(item.date ? new Date(item.date).toISOString().split('T')[0] : '');
+    setEditDetails(item.details || '');
+  }
+
+  async function handleUpdate(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editing) return;
+    setError('');
+    setSubmitting(true);
+    try {
+      const res = await fetch(`/api/media/${editing.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          description: editDescription,
+          date: editDate || null,
+          details: editDetails,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'فشل التحديث');
+        setSubmitting(false);
+        return;
+      }
+      setEditing(null);
+      await load();
+    } catch {
+      setError('حدث خطأ أثناء التحديث');
+    }
+    setSubmitting(false);
   }
 
   return (
@@ -161,6 +207,70 @@ export default function MediaManager() {
         </button>
       </form>
 
+      {editing && (
+        <form onSubmit={handleUpdate} className="border border-gold bg-panel p-5 mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <h3 className="md:col-span-2 font-display text-lg">تعديل الوسائط</h3>
+
+          {error && <div className="md:col-span-2 text-sm text-red-300 bg-red-900/20 border border-red-800 px-3 py-2 rounded">{error}</div>}
+
+          <div className="md:col-span-2">
+            <div className="relative w-full aspect-video bg-bg-soft mb-2 overflow-hidden">
+              {editing.type === 'VIDEO' ? (
+                <video src={editing.cloudinaryUrl} className="w-full h-full object-contain" controls />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={editing.cloudinaryUrl} alt="" className="w-full h-full object-contain" />
+              )}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm text-cream-dim mb-1.5">الوصف (اختياري)</label>
+            <input
+              value={editDescription}
+              onChange={(e) => setEditDescription(e.target.value)}
+              className="w-full bg-bg-soft border border-[var(--line)] px-3 py-2 text-cream"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-cream-dim mb-1.5">التاريخ (اختياري)</label>
+            <input
+              type="date"
+              value={editDate}
+              onChange={(e) => setEditDate(e.target.value)}
+              className="w-full bg-bg-soft border border-[var(--line)] px-3 py-2 text-cream"
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm text-cream-dim mb-1.5">تفاصيل إضافية (اختياري)</label>
+            <textarea
+              value={editDetails}
+              onChange={(e) => setEditDetails(e.target.value)}
+              rows={2}
+              className="w-full bg-bg-soft border border-[var(--line)] px-3 py-2 text-cream"
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setEditing(null)}
+            className="bg-bg-soft border border-[var(--line)] py-2.5 hover:border-cream transition-colors"
+          >
+            إلغاء
+          </button>
+
+          <button
+            type="submit"
+            disabled={submitting}
+            className="bg-gold text-bg font-bold py-2.5 hover:bg-gold-light transition-colors disabled:opacity-60"
+          >
+            {submitting ? 'جارِ الحفظ...' : 'حفظ التعديلات'}
+          </button>
+        </form>
+      )}
+
       {loading ? (
         <p className="text-cream-dim text-sm">جارِ التحميل...</p>
       ) : (
@@ -186,6 +296,12 @@ export default function MediaManager() {
                   className="flex-1 text-xs border border-[var(--line)] py-1 hover:border-gold disabled:opacity-40"
                 >
                   {item.isBest ? 'إزالة Best' : 'جعل Best'}
+                </button>
+                <button
+                  onClick={() => handleEdit(item)}
+                  className="flex-1 text-xs border border-[var(--line)] py-1 hover:border-gold"
+                >
+                  تعديل
                 </button>
                 <button
                   onClick={() => handleDelete(item.id)}
