@@ -30,10 +30,23 @@ export default function Footer() {
           target="_blank"
           rel="noopener noreferrer"
           dir="ltr"
-          className="flex items-center justify-center gap-3 hover:opacity-90 transition-opacity"
+          className="flex items-center justify-center gap-3 hover:opacity-90 transition-all group cursor-pointer"
         >
-          <p className="text-gold-light text-xs md:text-sm font-bold leading-snug max-w-[14rem] text-right">
+          <p className="text-gold-light text-xs md:text-sm font-bold leading-snug max-w-[14rem] text-right group-hover:underline underline-offset-2 decoration-gold-light/50">
             This Website Was Made By Rizonway Team
+            <svg
+              className="inline-block ml-1 w-3 h-3 opacity-70"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
           </p>
           <div
             className="w-14 h-14 shrink-0 bg-gold-light"
