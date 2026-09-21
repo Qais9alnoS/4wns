@@ -13,7 +13,6 @@ const members = [
     username: 'yazannmusic',
     url: 'https://www.instagram.com/yazannmusic/?hl=en',
     photo: '/assets/members/yazan.jpg',
-    background: "/assets/backgrounds/yazan'sbg.png",
   },
   {
     name: 'تيما ريماوي',
@@ -22,7 +21,6 @@ const members = [
     username: 'timarimawi33',
     url: 'https://www.instagram.com/timarimawi33/?hl=en',
     photo: '/assets/members/tima.jpg',
-    background: "/assets/backgrounds/tima'sbg.png",
   },
   {
     name: 'زين خلوف',
@@ -31,7 +29,6 @@ const members = [
     username: 'zeine_k2',
     url: 'https://www.instagram.com/zeine_k2/?hl=en',
     photo: '/assets/members/zein.jpg',
-    background: "/assets/backgrounds/zain'sbg.png",
   },
   {
     name: 'ليث قندلفت',
@@ -40,7 +37,6 @@ const members = [
     username: 'laythkandalaft',
     url: 'https://www.instagram.com/laythkandalaft/?hl=en',
     photo: '/assets/members/laith.jpg',
-    background: "/assets/backgrounds/لايزز.png",
   },
 ];
 
@@ -67,20 +63,6 @@ export default function AboutPage() {
                     className={`relative flex flex-col md:flex-row gap-9 md:gap-10 items-center md:items-stretch py-10 md:py-16 ${i > 0 ? 'border-t border-[var(--line)] mt-2 md:pt-20' : 'pt-4 md:pt-6'
                       } ${imgLeft ? 'md:flex-row' : 'md:flex-row-reverse'}`}
                   >
-                    {m.background && (
-                      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
-                        <Image
-                          src={m.background}
-                          alt=""
-                          fill
-                          sizes="100vw"
-                          className={`object-cover ${m.username === 'laythkandalaft' ? 'object-[38%_center] opacity-50' : 'object-center opacity-90'
-                            }`}
-                        />
-                        <div className={`absolute inset-0 ${imgLeft ? 'bg-gradient-to-l from-bg via-bg/40 to-transparent md:via-bg/20' : 'bg-gradient-to-r from-bg via-bg/40 to-transparent md:via-bg/20'
-                          }`} />
-                      </div>
-                    )}
                     <div
                       className={`relative z-[1] border border-[var(--line)] p-2.5 bg-gradient-to-b from-panel to-bg-soft max-w-[360px] md:max-w-[420px] w-full flex-shrink-0 ${imgLeft ? 'md:-rotate-[1.6deg]' : 'md:rotate-[1.6deg]'
                         }`}
