@@ -19,9 +19,12 @@ function visibleCount(width: number) {
 export default function BestMediaSlider({ items }: { items: Media[] }) {
   const [index, setIndex] = useState(0);
   const [viewportW, setViewportW] = useState(0);
+  const [playingVideos, setPlayingVideos] = useState<Set<string>>(new Set());
   const viewportRef = useRef<HTMLDivElement>(null);
   const dragX = useRef<number | null>(null);
   const dragged = useRef(false);
+  const wheelTimeout = useRef<NodeJS.Timeout | null>(null);
+  const accumulatedDeltaX = useRef(0);
 
   const visible = visibleCount(viewportW || 1280);
   const maxIndex = Math.max(0, items.length - visible);
@@ -74,7 +77,40 @@ export default function BestMediaSlider({ items }: { items: Media[] }) {
     go(delta < 0 ? 1 : -1);
   };
 
+  // Handle horizontal scroll/trackpad swipe
+  const onWheel = (event: React.WheelEvent) => {
+    // Check if it's a horizontal scroll (trackpad swipe left/right)
+    const isHorizontal = Math.abs(event.deltaX) > Math.abs(event.deltaY);
+
+    if (isHorizontal && items.length > visible) {
+      event.preventDefault();
+
+      // Accumulate deltaX for smoother trackpad gestures
+      accumulatedDeltaX.current += event.deltaX;
+
+      // Clear existing timeout
+      if (wheelTimeout.current) {
+        clearTimeout(wheelTimeout.current);
+      }
+
+      // Set a new timeout to trigger navigation after accumulation
+      wheelTimeout.current = setTimeout(() => {
+        const threshold = 30; // Lower threshold for better responsiveness
+
+        if (Math.abs(accumulatedDeltaX.current) > threshold) {
+          go(accumulatedDeltaX.current > 0 ? 1 : -1);
+          accumulatedDeltaX.current = 0;
+        }
+      }, 50); // Short delay for accumulation
+    }
+  };
+
   const pages = maxIndex + 1;
+
+  const handlePlayClick = (itemId: string, videoEl: HTMLVideoElement) => {
+    videoEl.play();
+    setPlayingVideos((prev) => new Set(prev).add(itemId));
+  };
 
   return (
     <section className="py-10 md:py-14">
@@ -95,6 +131,7 @@ export default function BestMediaSlider({ items }: { items: Media[] }) {
           onPointerCancel={() => {
             dragX.current = null;
           }}
+          onWheel={onWheel}
         >
           <div
             className="flex items-start will-change-transform motion-safe:transition-transform motion-safe:duration-500 motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)]"
@@ -117,13 +154,42 @@ export default function BestMediaSlider({ items }: { items: Media[] }) {
                 >
                   <div className="relative min-h-0 w-full flex-1 overflow-hidden bg-bg-soft">
                     {item.type === 'VIDEO' ? (
-                      <video
-                        key={item.id}
-                        src={item.cloudinaryUrl}
-                        controls
-                        controlsList="nodownload"
-                        className="h-full w-full object-cover [&::-webkit-media-controls]:opacity-0 [&::-webkit-media-controls]:transition-opacity [&::-webkit-media-controls]:group-hover:opacity-100 [&::-webkit-media-controls]:group-active:opacity-100"
-                      />
+                      <>
+                        <video
+                          key={item.id}
+                          ref={(el) => {
+                            if (el && !playingVideos.has(item.id)) {
+                              el.load();
+                            }
+                          }}
+                          src={item.cloudinaryUrl}
+                          controls={playingVideos.has(item.id)}
+                          controlsList="nodownload"
+                          className="h-full w-full object-cover"
+                        />
+                        {!playingVideos.has(item.id) && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const videoEl = e.currentTarget.previousElementSibling as HTMLVideoElement;
+                              if (videoEl) handlePlayClick(item.id, videoEl);
+                            }}
+                            className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors group"
+                            aria-label="تشغيل الفيديو"
+                          >
+                            <svg
+                              width="56"
+                              height="56"
+                              viewBox="0 0 24 24"
+                              fill="white"
+                              className="opacity-90 group-hover:opacity-100 transition-opacity"
+                              style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }}
+                            >
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </button>
+                        )}
+                      </>
                     ) : (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -169,9 +235,20 @@ export default function BestMediaSlider({ items }: { items: Media[] }) {
               type="button"
               onClick={() => go(-1)}
               aria-label="السابق"
-              className="px-1 text-lg leading-none hover:text-cream transition-colors active:scale-[0.98]"
+              className="p-2 hover:text-cream transition-colors duration-300 active:scale-95"
             >
-              &lt;
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
             </button>
             <span className="min-w-[3.5ch] text-center tabular-nums tracking-wide">
               {index + 1}/{pages}
@@ -180,9 +257,20 @@ export default function BestMediaSlider({ items }: { items: Media[] }) {
               type="button"
               onClick={() => go(1)}
               aria-label="التالي"
-              className="px-1 text-lg leading-none hover:text-cream transition-colors active:scale-[0.98]"
+              className="p-2 hover:text-cream transition-colors duration-300 active:scale-95"
             >
-              &gt;
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
             </button>
           </div>
         )}

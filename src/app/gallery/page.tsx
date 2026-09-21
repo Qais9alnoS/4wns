@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Media } from '@prisma/client';
 import Footer from '@/components/Footer';
 import GalleryMosaic, { GalleryMosaicSkeleton } from '@/components/GalleryMosaic';
@@ -14,6 +14,8 @@ export default function GalleryPage() {
   const [items, setItems] = useState<Media[]>([]);
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState<Media | null>(null);
+  const [showControls, setShowControls] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     fetch('/api/media')
@@ -21,6 +23,20 @@ export default function GalleryPage() {
       .then((data) => setItems(data.media || []))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    setShowControls(false);
+    if (videoRef.current) {
+      videoRef.current.load();
+    }
+  }, [active]);
+
+  const handlePlayClick = () => {
+    if (videoRef.current) {
+      videoRef.current.play();
+      setShowControls(true);
+    }
+  };
 
   return (
     <main>
@@ -49,7 +65,32 @@ export default function GalleryPage() {
           <div className="max-w-3xl w-full bg-panel border border-[var(--line)] p-3" onClick={(e) => e.stopPropagation()}>
             <div className="relative w-full max-h-[70vh] overflow-hidden bg-bg-soft flex items-center justify-center">
               {active.type === 'VIDEO' ? (
-                <video src={active.cloudinaryUrl} controls autoPlay className="max-h-[70vh] w-full" />
+                <>
+                  <video
+                    ref={videoRef}
+                    src={active.cloudinaryUrl}
+                    controls={showControls}
+                    className="max-h-[70vh] w-full"
+                  />
+                  {!showControls && (
+                    <button
+                      onClick={handlePlayClick}
+                      className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors group"
+                      aria-label="تشغيل الفيديو"
+                    >
+                      <svg
+                        width="64"
+                        height="64"
+                        viewBox="0 0 24 24"
+                        fill="white"
+                        className="opacity-90 group-hover:opacity-100 transition-opacity"
+                        style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }}
+                      >
+                        <path d="M8 5v14l11-7z" style={{ borderRadius: '2px' }} />
+                      </svg>
+                    </button>
+                  )}
+                </>
               ) : (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={active.cloudinaryUrl} alt={active.description || ''} className="max-h-[70vh] w-full object-contain" />

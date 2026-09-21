@@ -252,9 +252,9 @@ export default function GalleryMosaic({
   const rows =
     ready && ratios
       ? layoutRows(
-          items.map((item) => ({ id: item.id, ratio: ratios[item.id] ?? 1 })),
-          width
-        )
+        items.map((item) => ({ id: item.id, ratio: ratios[item.id] ?? 1 })),
+        width
+      )
       : [];
   const itemById = new Map(items.map((item) => [item.id, item]));
 
@@ -288,52 +288,61 @@ export default function GalleryMosaic({
                 if (!item) return null;
 
                 return (
-                <button
-                  key={tile.id}
-                  type="button"
-                  onClick={() => onOpen(item)}
-                  className="relative group shrink-0 overflow-hidden bg-panel text-right"
-                  style={{ width: tile.width, height: tile.height }}
-                >
-                  {showMedia && item.type === 'VIDEO' && (
-                    <video
-                      src={item.cloudinaryUrl}
-                      className="absolute inset-0 h-full w-full object-cover object-center"
-                      muted
-                      playsInline
-                      preload="metadata"
-                    />
-                  )}
-                  {showMedia && item.type !== 'VIDEO' && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={item.cloudinaryUrl}
-                      alt={item.description || ''}
-                      className="absolute inset-0 h-full w-full object-cover object-center"
-                      loading="lazy"
-                    />
-                  )}
+                  <button
+                    key={tile.id}
+                    type="button"
+                    onClick={() => onOpen(item)}
+                    className="relative group shrink-0 overflow-hidden bg-panel text-right"
+                    style={{ width: tile.width, height: tile.height }}
+                  >
+                    {showMedia && item.type === 'VIDEO' && (
+                      <video
+                        src={item.cloudinaryUrl}
+                        className="absolute inset-0 h-full w-full object-cover object-center"
+                        muted
+                        playsInline
+                        preload="metadata"
+                      />
+                    )}
+                    {showMedia && item.type !== 'VIDEO' && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={item.cloudinaryUrl}
+                        alt={item.description || ''}
+                        className="absolute inset-0 h-full w-full object-cover object-center"
+                        loading="lazy"
+                      />
+                    )}
 
-                  {item.type === 'VIDEO' && (
-                    <span className="absolute inset-0 flex items-center justify-center text-cream text-3xl bg-black/20 md:group-hover:opacity-0 transition-opacity">
-                      ▶
-                    </span>
-                  )}
+                    {item.type === 'VIDEO' && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors pointer-events-none">
+                        <svg
+                          width="48"
+                          height="48"
+                          viewBox="0 0 24 24"
+                          fill="white"
+                          className="opacity-90 group-hover:opacity-100 transition-opacity"
+                          style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }}
+                        >
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
+                    )}
 
-                  {hasInfo(item) && (
-                    <div className="hidden md:flex absolute inset-0 flex-col justify-end p-3 bg-gradient-to-t from-black/85 via-black/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                      {item.description && (
-                        <p className="text-cream text-sm font-bold leading-snug line-clamp-2">{item.description}</p>
-                      )}
-                      {item.details && (
-                        <p className="text-cream-dim text-xs mt-1 line-clamp-2">{item.details}</p>
-                      )}
-                      {item.date && (
-                        <p className="text-gold-light text-xs mt-1">{formatDate(item.date)}</p>
-                      )}
-                    </div>
-                  )}
-                </button>
+                    {hasInfo(item) && (
+                      <div className="hidden md:flex absolute inset-0 flex-col justify-end p-3 bg-gradient-to-t from-black/85 via-black/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                        {item.description && (
+                          <p className="text-cream text-sm font-bold leading-snug line-clamp-2">{item.description}</p>
+                        )}
+                        {item.details && (
+                          <p className="text-cream-dim text-xs mt-1 line-clamp-2">{item.details}</p>
+                        )}
+                        {item.date && (
+                          <p className="text-gold-light text-xs mt-1">{formatDate(item.date)}</p>
+                        )}
+                      </div>
+                    )}
+                  </button>
                 );
               })}
             </div>
